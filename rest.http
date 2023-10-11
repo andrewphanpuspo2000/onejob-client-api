@@ -1,0 +1,4 @@
+@rootAPI= http://localhost:8002
+
+###
+GET {{rootAPI}}
