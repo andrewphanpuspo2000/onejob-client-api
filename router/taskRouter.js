@@ -5,8 +5,9 @@ const router = express.Router();
 
 router.post("/postTask", async (req, res, next) => {
   try {
-    const { taskDescription } = req.body;
+    const { taskDescription, responsibilities } = req.body;
     req.body.taskDescription = taskDescription.split("\n");
+    req.body.responsibilities = responsibilities.split("\n");
     const result = await addTask(req.body);
     if (result._id) {
       return res.json({

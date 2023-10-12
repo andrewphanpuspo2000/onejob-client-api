@@ -14,10 +14,7 @@ const taskSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    typeCandidate: {
-      type: String,
-      required: true,
-    },
+
     endDate: {
       type: String,
       required: true,
@@ -32,6 +29,14 @@ const taskSchema = mongoose.Schema(
     },
     contractLength: {
       type: String,
+    },
+    responsibilities: {
+      type: [String],
+      required: true,
+    },
+    skills: {
+      type: String,
+      required: true,
     },
   },
   {

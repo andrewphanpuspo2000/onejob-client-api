@@ -1,4 +1,7 @@
 @rootAPI= http://localhost:8002
-
+@taskAPI= {{rootAPI}}/onejob/api/job/task/getTasks
 ###
 GET {{rootAPI}}
+
+###
+GET {{taskAPI}}
