@@ -14,7 +14,18 @@ const taskSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-
+    salaryFrom: {
+      type: Number,
+      required: true,
+    },
+    salaryTo: {
+      type: Number,
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
     endDate: {
       type: String,
       required: true,
@@ -24,7 +35,7 @@ const taskSchema = mongoose.Schema(
       required: true,
     },
     toDo: {
-      type: String,
+      type: [String],
       required: true,
     },
     contractLength: {
@@ -35,7 +46,7 @@ const taskSchema = mongoose.Schema(
       required: true,
     },
     skills: {
-      type: String,
+      type: [String],
       required: true,
     },
   },

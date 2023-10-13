@@ -7,3 +7,7 @@ export const addTask = (task) => {
 export const getTasks = () => {
   return taskSchema.find();
 };
+
+export const getTaskById = (id) => {
+  return taskSchema.findById(id);
+};

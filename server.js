@@ -13,8 +13,9 @@ app.use(morgan());
 //call router
 import taskRouter from "./router/taskRouter.js";
 app.use("/onejob/api/job/task", taskRouter);
-app.use((error, req, res) => {
-  return res.status(error.statusCode).json({
+app.use((error, req, res, next) => {
+  const code = error.statusCode || 500;
+  res.status(code).json({
     status: "error",
     message: error.message,
   });
