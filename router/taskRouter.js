@@ -13,6 +13,8 @@ router.post("/postTask", async (req, res, next) => {
     if (skillsArray.length > 0) {
       skillsArray.map((item) => item.trim());
       req.body.skills = skillsArray;
+    } else {
+      req.body.skills = skillsArray;
     }
     const result = await addTask(req.body);
     if (result._id) {
