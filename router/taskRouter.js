@@ -1,7 +1,12 @@
 import express from "express";
 import { addTask, getTaskById, getTasks } from "../taskModel/taskQueries.js";
+import multer from "multer";
+import { addFile } from "../aws-config/submitFIle.js";
+import { uploadAnswer } from "../answerModel/answerQueries.js";
 
 const router = express.Router();
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/postTask", async (req, res, next) => {
   try {
@@ -31,6 +36,44 @@ router.post("/postTask", async (req, res, next) => {
   } catch (err) {
     err.statusCode = 400;
     return next(err);
+  }
+});
+router.post("/submitTask", upload.single("file"), async (req, res, next) => {
+  try {
+    const { type, ...rest } = req.body;
+
+    if (type === "file") {
+      if (req.file) {
+        const { Location } = await addFile(req.file);
+        console.log(Location);
+        if (Location) {
+          rest.file = Location;
+          const result = await uploadAnswer({ ...rest, answerType: type });
+
+          if (result?._id) {
+            return res.json({
+              status: "success",
+              message: "Answer has been submitted",
+            });
+          }
+        }
+      }
+    } else if (type === "text") {
+      rest.text = rest.text.split("\n");
+      const result = await uploadAnswer({ ...rest, answerType: type });
+      if (result?._id) {
+        res.json({
+          status: "success",
+          message: "Text Answer has been submitted",
+        });
+      }
+    }
+    res.json({
+      status: "error",
+      message: "Answer can not be submitted",
+    });
+  } catch (err) {
+    next(err);
   }
 });
 
