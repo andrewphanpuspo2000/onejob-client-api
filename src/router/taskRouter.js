@@ -10,9 +10,11 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/postTask", async (req, res, next) => {
   try {
-    const { taskDescription, responsibilities, toDo, skills } = req.body;
+    const { taskDescription, responsibilities, jobDescription, toDo, skills } =
+      req.body;
     req.body.taskDescription = taskDescription.split("\n");
     req.body.responsibilities = responsibilities.split("\n");
+    req.body.jobDescription = jobDescription.split("\n");
     req.body.toDo = toDo.split("\n");
     const skillsArray = skills.split(",");
     if (skillsArray.length > 0) {
@@ -65,6 +67,15 @@ router.post("/submitTask", upload.single("file"), async (req, res, next) => {
         res.json({
           status: "success",
           message: "Text Answer has been submitted",
+        });
+      }
+    } else if (type === "url") {
+      rest.links = rest.links.split(",");
+      const result = await uploadAnswer({ ...rest, answerType: type });
+      if (result?._id) {
+        return res.json({
+          status: "success",
+          message: "link answer has been submitted",
         });
       }
     }

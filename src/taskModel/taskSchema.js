@@ -22,6 +22,10 @@ const taskSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    jobDescription: {
+      type: [String],
+      required: true,
+    },
     location: {
       type: String,
       required: true,
