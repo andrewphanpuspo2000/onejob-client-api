@@ -1,7 +1,17 @@
 @rootAPI= http://localhost:8002
 @taskAPI= {{rootAPI}}/onejob/api/job/task/getTasks
+
+@companyAPI={{rootAPI}}/onejob/api/job/company
 ###
 GET {{rootAPI}}
 
 ###
 GET {{taskAPI}}
+
+###
+POST {{companyAPI}}/addCompany
+Content-Type: application/json
+
+{
+    "companyName":"name"
+}

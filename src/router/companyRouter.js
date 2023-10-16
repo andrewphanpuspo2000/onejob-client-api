@@ -9,16 +9,18 @@ const router = express.Router();
 
 router.post("/addCompany", async (req, res, next) => {
   try {
-    req.body.established = req.body.established.split("\n");
+    req.body.description = req.body.description.split("\n");
     req.body.mission = req.body.mission.split("\n");
     const findEmail = await findCompanyByFilter({ email: req.body.email });
-    if (!findEmail._id) {
+
+    if (findEmail === null) {
       req.body.password = encryptPass(req.body.password);
       const result = await addCompany(req.body);
+      console.log(result);
       if (result._id) {
         const emailResult = await sendCompanyVerify({
           email: result.email,
-          name: result.fName,
+          name: result.owner,
         });
         if (emailResult === "success") {
           res.json({
