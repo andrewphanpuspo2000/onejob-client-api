@@ -53,6 +53,12 @@ const taskSchema = mongoose.Schema(
       type: [String],
       required: true,
     },
+    note: {
+      type: String,
+    },
+    file: {
+      type: String,
+    },
   },
   {
     timestamps: true,

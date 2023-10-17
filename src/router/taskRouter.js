@@ -1,14 +1,14 @@
 import express from "express";
 import { addTask, getTaskById, getTasks } from "../taskModel/taskQueries.js";
 import multer from "multer";
-import { addFile } from "../aws-config/submitFIle.js";
+import { addFile, addFileTask } from "../aws-config/submitFIle.js";
 import { uploadAnswer } from "../answerModel/answerQueries.js";
 
 const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/postTask", async (req, res, next) => {
+router.post("/postTask", upload.single("file"), async (req, res, next) => {
   try {
     const { taskDescription, responsibilities, jobDescription, toDo, skills } =
       req.body;
@@ -16,6 +16,12 @@ router.post("/postTask", async (req, res, next) => {
     req.body.responsibilities = responsibilities.split("\n");
     req.body.jobDescription = jobDescription.split("\n");
     req.body.toDo = toDo.split("\n");
+    if (req.file) {
+      const { Location } = await addFileTask(req.file);
+      if (location) {
+        req.body.file = Location;
+      }
+    }
     const skillsArray = skills.split(",");
     if (skillsArray.length > 0) {
       skillsArray.map((item) => item.trim());
@@ -61,7 +67,7 @@ router.post("/submitTask", upload.single("file"), async (req, res, next) => {
         }
       }
     } else if (type === "text") {
-      rest.text = rest.text.split("\n");
+      // rest.text = rest.text.split("\n");
       const result = await uploadAnswer({ ...rest, answerType: type });
       if (result?._id) {
         res.json({

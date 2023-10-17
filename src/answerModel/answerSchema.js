@@ -32,7 +32,7 @@ const answerSchema = mongoose.Schema(
       required: true,
     },
     text: {
-      type: [String],
+      type: String,
     },
     file: {
       type: String,

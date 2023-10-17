@@ -59,6 +59,9 @@ const companySchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    logo: {
+      type: String,
+    },
   },
   {
     timestamps: true,

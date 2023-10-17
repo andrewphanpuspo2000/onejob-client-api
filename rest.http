@@ -9,7 +9,7 @@ GET {{rootAPI}}
 GET {{taskAPI}}
 
 ###
-POST {{companyAPI}}/addCompany
+POST {{companyAPI}}/test
 Content-Type: application/json
 
 {
