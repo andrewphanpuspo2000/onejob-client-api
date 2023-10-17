@@ -18,7 +18,8 @@ router.post("/postTask", upload.single("file"), async (req, res, next) => {
     req.body.toDo = toDo.split("\n");
     if (req.file) {
       const { Location } = await addFileTask(req.file);
-      if (location) {
+      console.log(Location);
+      if (Location) {
         req.body.file = Location;
       }
     }

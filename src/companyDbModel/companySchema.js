@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const companySchema = mongoose.Schema(
   {
+    status: {
+      type: String,
+      default: "inactive",
+    },
     companyName: {
       type: String,
       required: true,
@@ -60,6 +64,9 @@ const companySchema = mongoose.Schema(
       required: true,
     },
     logo: {
+      type: String,
+    },
+    verificationCode: {
       type: String,
     },
   },
