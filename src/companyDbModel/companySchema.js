@@ -69,6 +69,9 @@ const companySchema = mongoose.Schema(
     verificationCode: {
       type: String,
     },
+    refreshJWT: {
+      type: String,
+    },
   },
   {
     timestamps: true,

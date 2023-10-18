@@ -4,9 +4,11 @@ import {
   findCompanyAndUpdate,
   findCompanyByFilter,
 } from "../companyDbModel/companyQueries.js";
-import { encryptPass } from "../bcryptjs/encrypt.js";
+import { decrypt, encryptPass } from "../bcryptjs/encrypt.js";
 import { sendCompanyVerify } from "../email/companyEmail.js";
 import { v4 as uuidv4 } from "uuid";
+import { employerAccessJWT, employerRefreshJWT } from "../jsonwebtoken/jwt.js";
+import { authEmployer } from "../middleware/auth.js";
 const router = express.Router();
 
 router.post("/addCompany", async (req, res, next) => {
@@ -20,7 +22,7 @@ router.post("/addCompany", async (req, res, next) => {
       req.body.verificationCode = uuidv4();
       const result = await addCompany(req.body);
       console.log(result);
-      if (result._id) {
+      if (result?._id) {
         const linkVerification = `${process.env.WEB_DOMAIN}/account/employer/verification?e=${result.email}&c=${result.verificationCode}`;
         const emailResult = await sendCompanyVerify({
           email: result.email,
@@ -70,6 +72,48 @@ router.post("/verify", async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+router.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const userCheck = await findCompanyByFilter({ email });
+    console.log(userCheck);
+    console.log("usercheck");
+    if (userCheck?._id !== undefined) {
+      const checkPass = decrypt(password, userCheck.password);
+      if (checkPass) {
+        const accessJWT = await employerAccessJWT(userCheck.email);
+        const refreshJWT = await employerRefreshJWT(userCheck.email);
+        if (accessJWT && refreshJWT) {
+          res.json({
+            status: "success",
+            accessJWT,
+            refreshJWT,
+          });
+        }
+      } else {
+        return res.json({
+          status: "error",
+          message: "Password is incorrect",
+        });
+      }
+    } else {
+      return res.json({
+        status: "error",
+        message: "Email has not been registered",
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/getEmployerInfo", authEmployer, (req, res, next) => {
+  res.json({
+    status: "success",
+    user: req.employerInfo,
+  });
 });
 
 export default router;

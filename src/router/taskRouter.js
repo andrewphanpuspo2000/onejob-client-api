@@ -16,7 +16,7 @@ router.post("/postTask", upload.single("file"), async (req, res, next) => {
     req.body.responsibilities = responsibilities.split("\n");
     req.body.jobDescription = jobDescription.split("\n");
     req.body.toDo = toDo.split("\n");
-    if (req.file) {
+    if (req?.file) {
       const { Location } = await addFileTask(req.file);
       console.log(Location);
       if (Location) {
@@ -31,7 +31,7 @@ router.post("/postTask", upload.single("file"), async (req, res, next) => {
       req.body.skills = skillsArray;
     }
     const result = await addTask(req.body);
-    if (result._id) {
+    if (result?._id) {
       return res.json({
         status: "success",
         message: "Task has been posted",
@@ -52,9 +52,9 @@ router.post("/submitTask", upload.single("file"), async (req, res, next) => {
     const { type, ...rest } = req.body;
 
     if (type === "file") {
-      if (req.file) {
+      if (req?.file) {
         const { Location } = await addFile(req.file);
-        console.log(Location);
+
         if (Location) {
           rest.file = Location;
           const result = await uploadAnswer({ ...rest, answerType: type });
