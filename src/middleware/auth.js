@@ -1,5 +1,9 @@
 import { findCompanyByFilter } from "../companyDbModel/companyQueries.js";
-import { verifyAccessJWT } from "../jsonwebtoken/jwt.js";
+import {
+  employerAccessJWT,
+  verifyAccessJWT,
+  verifyRefreshJWT,
+} from "../jsonwebtoken/jwt.js";
 
 export const authEmployer = async (req, res, next) => {
   try {
@@ -27,5 +31,23 @@ export const authEmployer = async (req, res, next) => {
       return next(err);
     }
     return next(err);
+  }
+};
+
+export const newRefreshJwt = async (req, res, next) => {
+  try {
+    console.log("this is new JWt");
+    const { authorization } = req.headers;
+    console.log("auth", authorization);
+    const verify = verifyRefreshJWT(authorization);
+    console.log(verify?.email);
+    if (verify?.email) {
+      const accessJWT = await employerAccessJWT(verify.email);
+      if (accessJWT !== undefined) {
+        return res.json({ status: "success", accessJWT });
+      }
+    }
+  } catch (err) {
+    next(err);
   }
 };

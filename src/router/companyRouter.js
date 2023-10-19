@@ -8,7 +8,7 @@ import { decrypt, encryptPass } from "../bcryptjs/encrypt.js";
 import { sendCompanyVerify } from "../email/companyEmail.js";
 import { v4 as uuidv4 } from "uuid";
 import { employerAccessJWT, employerRefreshJWT } from "../jsonwebtoken/jwt.js";
-import { authEmployer } from "../middleware/auth.js";
+import { authEmployer, newRefreshJwt } from "../middleware/auth.js";
 const router = express.Router();
 
 router.post("/addCompany", async (req, res, next) => {
@@ -116,4 +116,5 @@ router.get("/getEmployerInfo", authEmployer, (req, res, next) => {
   });
 });
 
+router.get("/newAccessJWT", newRefreshJwt);
 export default router;
