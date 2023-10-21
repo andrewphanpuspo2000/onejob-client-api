@@ -1,8 +1,14 @@
 import express from "express";
-import { addTask, getTaskById, getTasks } from "../taskModel/taskQueries.js";
+import {
+  addTask,
+  getTaskById,
+  getTasks,
+  getTasksByFilter,
+} from "../taskModel/taskQueries.js";
 import multer from "multer";
 import { addFile, addFileTask } from "../aws-config/submitFIle.js";
 import { uploadAnswer } from "../answerModel/answerQueries.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -132,6 +138,28 @@ router.get("/getTaskById/:id", async (req, res, next) => {
   } catch (error) {
     error.statusCode = 400;
     next(err);
+  }
+});
+
+router.get("/getTaskByCompanyId/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await getTasksByFilter({
+      companyId: new mongoose.Types.ObjectId(id),
+    });
+    if (result?.length > 0) {
+      return res.json({
+        status: "success",
+        result,
+      });
+    } else {
+      return res.json({
+        status: "error",
+        message: "no data",
+      });
+    }
+  } catch (error) {
+    next(error);
   }
 });
 

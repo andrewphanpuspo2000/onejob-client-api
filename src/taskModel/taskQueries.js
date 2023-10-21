@@ -11,3 +11,7 @@ export const getTasks = () => {
 export const getTaskById = (id) => {
   return taskSchema.findById(id);
 };
+
+export const getTasksByFilter = (data) => {
+  return taskSchema.find(data);
+};
