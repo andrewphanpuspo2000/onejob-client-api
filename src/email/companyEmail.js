@@ -34,7 +34,7 @@ export const sendCompanyVerify = async ({ email, name, link }) => {
           
             }
             .header-logo{
-              width:8rem;
+              width:150px;
              
             }
             .click-button{

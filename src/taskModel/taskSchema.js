@@ -2,6 +2,18 @@ import mongoose from "mongoose";
 
 const taskSchema = mongoose.Schema(
   {
+    companyId: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+    },
+    company: {
+      type: String,
+      required: true,
+    },
+    logo: {
+      type: String,
+      default: "",
+    },
     jobTitle: {
       type: String,
       required: true,
