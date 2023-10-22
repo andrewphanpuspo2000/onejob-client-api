@@ -9,50 +9,63 @@ import multer from "multer";
 import { addFile, addFileTask } from "../aws-config/submitFIle.js";
 import { uploadAnswer } from "../answerModel/answerQueries.js";
 import mongoose from "mongoose";
+import { authEmployer } from "../middleware/auth.js";
 
 const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/postTask", upload.single("file"), async (req, res, next) => {
-  try {
-    const { taskDescription, responsibilities, jobDescription, toDo, skills } =
-      req.body;
-    req.body.taskDescription = taskDescription.split("\n");
-    req.body.responsibilities = responsibilities.split("\n");
-    req.body.jobDescription = jobDescription.split("\n");
-    req.body.toDo = toDo.split("\n");
-    if (req?.file) {
-      const { Location } = await addFileTask(req.file);
-      console.log(Location);
-      if (Location) {
-        req.body.file = Location;
+router.post(
+  "/postTask",
+  authEmployer,
+  upload.single("file"),
+  async (req, res, next) => {
+    try {
+      const {
+        taskDescription,
+        responsibilities,
+        jobDescription,
+        toDo,
+        skills,
+        companyId,
+      } = req.body;
+      req.body.taskDescription = taskDescription.split("\n");
+      req.body.responsibilities = responsibilities.split("\n");
+      req.body.jobDescription = jobDescription.split("\n");
+      req.body.companyId = new mongoose.Types.ObjectId(companyId);
+      req.body.toDo = toDo.split("\n");
+      if (req?.file) {
+        const { Location } = await addFileTask(req.file);
+
+        if (Location) {
+          req.body.file = Location;
+        }
       }
+      const skillsArray = skills.split(",");
+      if (skillsArray.length > 0) {
+        skillsArray.map((item) => item.trim());
+        req.body.skills = skillsArray;
+      } else {
+        req.body.skills = skillsArray;
+      }
+      const result = await addTask(req.body);
+      if (result?._id) {
+        return res.json({
+          status: "success",
+          message: "Task has been posted",
+        });
+      } else {
+        res.json({
+          status: "error",
+          message: "Fail to add data",
+        });
+      }
+    } catch (err) {
+      err.statusCode = 400;
+      return next(err);
     }
-    const skillsArray = skills.split(",");
-    if (skillsArray.length > 0) {
-      skillsArray.map((item) => item.trim());
-      req.body.skills = skillsArray;
-    } else {
-      req.body.skills = skillsArray;
-    }
-    const result = await addTask(req.body);
-    if (result?._id) {
-      return res.json({
-        status: "success",
-        message: "Task has been posted",
-      });
-    } else {
-      res.json({
-        status: "error",
-        message: "Fail to add data",
-      });
-    }
-  } catch (err) {
-    err.statusCode = 400;
-    return next(err);
   }
-});
+);
 router.post("/submitTask", upload.single("file"), async (req, res, next) => {
   try {
     const { type, ...rest } = req.body;
