@@ -7,7 +7,9 @@ export const addCompany = (company) => {
 export const findCompanyByFilter = (prop) => {
   return companySchema.findOne(prop);
 };
-
+export const findCompanyIdAndUpdate=(id,data)=>{
+  return companySchema.findByIdAndUpdate(id,data);
+}
 export const findCompanyAndUpdate = (filter, data) => {
   return companySchema.findOneAndUpdate(filter, data);
 };

@@ -65,6 +65,7 @@ const companySchema = mongoose.Schema(
     },
     logo: {
       type: String,
+      default:"",
     },
     verificationCode: {
       type: String,
