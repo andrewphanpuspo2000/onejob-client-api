@@ -15,3 +15,7 @@ export const getTaskById = (id) => {
 export const getTasksByFilter = (data) => {
   return taskSchema.find(data);
 };
+
+export const updateTask=(id,data)=>{
+  return taskSchema.findByIdAndUpdate(id,data,{new:true});
+}

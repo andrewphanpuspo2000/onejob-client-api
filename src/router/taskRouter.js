@@ -4,6 +4,7 @@ import {
   getTaskById,
   getTasks,
   getTasksByFilter,
+  updateTask,
 } from "../taskModel/taskQueries.js";
 import multer from "multer";
 import { addFile, addFileTask } from "../aws-config/submitFIle.js";
@@ -175,5 +176,60 @@ router.get("/getTaskByCompanyId/:id", async (req, res, next) => {
     next(error);
   }
 });
+
+router.put(
+  "/updateTask",
+  authEmployer,
+  upload.single("document"),
+  async (req, res, next) => {
+    try {
+      const {_id,
+        taskDescription,
+        responsibilities,
+        jobDescription,
+        toDo,
+        skills,
+        companyId,
+      } = req.body;
+      req.body.taskDescription = taskDescription.split("\n");
+      req.body.responsibilities = responsibilities.split("\n");
+      req.body.jobDescription = jobDescription.split("\n");
+      req.body.companyId = new mongoose.Types.ObjectId(companyId);
+      req.body.toDo = toDo.split("\n");
+      console.log(req.body.jobTitle);
+      if (req?.file!==undefined) {
+        const { Location } = await addFileTask(req.file);
+
+        if (Location) {
+          req.body.file = Location;
+        }
+      }
+      const skillsArray = skills.split(",");
+      if (skillsArray.length > 0) {
+        skillsArray.map((item) => item.trim());
+        req.body.skills = skillsArray;
+      } else {
+        req.body.skills = skillsArray;
+      }
+      const result = await updateTask(_id,req.body);
+      console.log(result);
+      if (result?._id) {
+        return res.json({
+          status: "success",
+          message: "Task has been updated",
+        });
+      } else {
+        res.json({
+          status: "error",
+          message: "Fail to update data",
+        });
+      }
+    } catch (err) {
+      err.statusCode = 400;
+      return next(err);
+    }
+  }
+);
+
 
 export default router;

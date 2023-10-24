@@ -67,9 +67,11 @@ const taskSchema = mongoose.Schema(
     },
     note: {
       type: String,
+      default:""
     },
     file: {
       type: String,
+      default:""
     },
   },
   {
