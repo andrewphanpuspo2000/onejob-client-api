@@ -4,7 +4,7 @@ import { findCompanyAndUpdate } from "../companyDbModel/companyQueries.js";
 
 export const employerAccessJWT = async (email) => {
   const token = jsonwebtoken.sign({ email }, process.env.ACCESS_JWT, {
-    expiresIn: "1m",
+    expiresIn: "1h",
   });
   const addSession = await addEmployerToken({ token, associate: email });
 

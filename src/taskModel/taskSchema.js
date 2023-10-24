@@ -56,6 +56,7 @@ const taskSchema = mongoose.Schema(
     },
     contractLength: {
       type: String,
+      default: "",
     },
     responsibilities: {
       type: [String],
@@ -67,11 +68,11 @@ const taskSchema = mongoose.Schema(
     },
     note: {
       type: String,
-      default:""
+      default: "",
     },
     file: {
       type: String,
-      default:""
+      default: "",
     },
   },
   {

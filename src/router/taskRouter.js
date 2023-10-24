@@ -151,7 +151,7 @@ router.get("/getTaskById/:id", async (req, res, next) => {
     }
   } catch (error) {
     error.statusCode = 400;
-    next(err);
+    next(error);
   }
 });
 
@@ -183,7 +183,8 @@ router.put(
   upload.single("document"),
   async (req, res, next) => {
     try {
-      const {_id,
+      const {
+        _id,
         taskDescription,
         responsibilities,
         jobDescription,
@@ -197,7 +198,7 @@ router.put(
       req.body.companyId = new mongoose.Types.ObjectId(companyId);
       req.body.toDo = toDo.split("\n");
       console.log(req.body.jobTitle);
-      if (req?.file!==undefined) {
+      if (req?.file !== undefined) {
         const { Location } = await addFileTask(req.file);
 
         if (Location) {
@@ -211,12 +212,13 @@ router.put(
       } else {
         req.body.skills = skillsArray;
       }
-      const result = await updateTask(_id,req.body);
+      const result = await updateTask(_id, req.body);
       console.log(result);
       if (result?._id) {
         return res.json({
           status: "success",
           message: "Task has been updated",
+          result,
         });
       } else {
         res.json({
@@ -230,6 +232,5 @@ router.put(
     }
   }
 );
-
 
 export default router;
