@@ -33,12 +33,15 @@ const answerSchema = mongoose.Schema(
     },
     text: {
       type: String,
+      default: "",
     },
     file: {
       type: String,
+      default: "",
     },
     links: {
       type: [String],
+      default: [],
     },
     taskId: {
       type: mongoose.Types.ObjectId,

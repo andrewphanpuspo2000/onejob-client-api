@@ -70,7 +70,7 @@ router.post(
 );
 router.post("/submitTask", upload.single("file"), async (req, res, next) => {
   try {
-    const { type, ...rest } = req.body;
+    const { type, taskId, ...rest } = req.body;
 
     if (type === "file") {
       if (req?.file) {
@@ -78,7 +78,11 @@ router.post("/submitTask", upload.single("file"), async (req, res, next) => {
 
         if (Location) {
           rest.file = Location;
-          const result = await uploadAnswer({ ...rest, answerType: type });
+          const result = await uploadAnswer({
+            ...rest,
+            answerType: type,
+            taskId: new mongoose.Types.ObjectId(taskId),
+          });
 
           if (result?._id) {
             return res.json({
@@ -90,7 +94,11 @@ router.post("/submitTask", upload.single("file"), async (req, res, next) => {
       }
     } else if (type === "text") {
       // rest.text = rest.text.split("\n");
-      const result = await uploadAnswer({ ...rest, answerType: type });
+      const result = await uploadAnswer({
+        ...rest,
+        answerType: type,
+        taskId: new mongoose.Types.ObjectId(taskId),
+      });
       if (result?._id) {
         res.json({
           status: "success",
@@ -99,7 +107,11 @@ router.post("/submitTask", upload.single("file"), async (req, res, next) => {
       }
     } else if (type === "url") {
       rest.links = rest.links.split(",");
-      const result = await uploadAnswer({ ...rest, answerType: type });
+      const result = await uploadAnswer({
+        ...rest,
+        answerType: type,
+        taskId: new mongoose.Types.ObjectId(taskId),
+      });
       if (result?._id) {
         return res.json({
           status: "success",
@@ -215,7 +227,7 @@ router.put(
       }
       const result = await updateTask(_id, req.body);
       console.log(result);
-      if (result?._id!==null) {
+      if (result?._id !== null) {
         return res.json({
           status: "success",
           message: "Task has been updated",
@@ -233,26 +245,26 @@ router.put(
     }
   }
 );
-router.delete("/deleteTask/:id",async(req,res,next)=>{
-  try{
-   const {id} = req.params;
-   const checkTask= await getTaskById(id);
-   if(checkTask?._id ){
-   const result= await deleteTask(id);
-   if(result._id!==null){
-    return res.json({
-      status:"success",
-      message:"task has been deleted",
-    });
-   } 
-  }else{
-    return res.json({
-      status:"error",
-      message:"No task found"
-    });
-  }
-  }catch(error){
-   next(error);
+router.delete("/deleteTask/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const checkTask = await getTaskById(id);
+    if (checkTask?._id) {
+      const result = await deleteTask(id);
+      if (result._id !== null) {
+        return res.json({
+          status: "success",
+          message: "task has been deleted",
+        });
+      }
+    } else {
+      return res.json({
+        status: "error",
+        message: "No task found",
+      });
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
