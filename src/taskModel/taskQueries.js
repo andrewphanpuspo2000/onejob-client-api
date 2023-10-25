@@ -19,3 +19,9 @@ export const getTasksByFilter = (data) => {
 export const updateTask=(id,data)=>{
   return taskSchema.findByIdAndUpdate(id,data,{new:true});
 }
+export const updateTaskMany=(filter,update)=>{
+  return taskSchema.updateMany(filter,update);
+}
+export const deleteTask = (id) => {
+   return taskSchema.findByIdAndDelete(id);
+}

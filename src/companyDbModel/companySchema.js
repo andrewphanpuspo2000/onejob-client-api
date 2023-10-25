@@ -42,6 +42,7 @@ const companySchema = mongoose.Schema(
     },
     website: {
       type: String,
+      default:"",
     },
     established: {
       type: Date,
@@ -69,9 +70,11 @@ const companySchema = mongoose.Schema(
     },
     verificationCode: {
       type: String,
+      default:"",
     },
     refreshJWT: {
       type: String,
+      default:"",
     },
   },
   {
@@ -80,3 +83,4 @@ const companySchema = mongoose.Schema(
 );
 
 export default mongoose.model("company", companySchema);
+

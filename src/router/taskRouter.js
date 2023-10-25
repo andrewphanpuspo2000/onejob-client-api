@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addTask,
+  deleteTask,
   getTaskById,
   getTasks,
   getTasksByFilter,
@@ -214,7 +215,7 @@ router.put(
       }
       const result = await updateTask(_id, req.body);
       console.log(result);
-      if (result?._id) {
+      if (result?._id!==null) {
         return res.json({
           status: "success",
           message: "Task has been updated",
@@ -232,5 +233,27 @@ router.put(
     }
   }
 );
+router.delete("/deleteTask/:id",async(req,res,next)=>{
+  try{
+   const {id} = req.params;
+   const checkTask= await getTaskById(id);
+   if(checkTask?._id ){
+   const result= await deleteTask(id);
+   if(result._id!==null){
+    return res.json({
+      status:"success",
+      message:"task has been deleted",
+    });
+   } 
+  }else{
+    return res.json({
+      status:"error",
+      message:"No task found"
+    });
+  }
+  }catch(error){
+   next(error);
+  }
+});
 
 export default router;
