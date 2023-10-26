@@ -36,11 +36,10 @@ export const authEmployer = async (req, res, next) => {
 
 export const newRefreshJwt = async (req, res, next) => {
   try {
-    console.log("this is new JWt");
     const { authorization } = req.headers;
-    console.log("auth", authorization);
+
     const verify = verifyRefreshJWT(authorization);
-    console.log(verify?.email);
+
     if (verify?.email) {
       const accessJWT = await employerAccessJWT(verify.email);
       if (accessJWT !== undefined) {
@@ -48,6 +47,11 @@ export const newRefreshJwt = async (req, res, next) => {
       }
     }
   } catch (err) {
-    next(err);
+    if (err.message.includes("jwt expired")) {
+      err.message = "refresh jwt expired";
+      err.statusCode = 400;
+      return next(err);
+    }
+    return next(err);
   }
 };
