@@ -13,8 +13,8 @@ app.use(morgan());
 //call router
 import companyRouter from "./src/router/companyRouter.js";
 import taskRouter from "./src/router/taskRouter.js";
-import logoRouter from "./src/router/logo.js"
-import answerRouter from "./src/router/answerRouter.js"
+import logoRouter from "./src/router/logo.js";
+import answerRouter from "./src/router/answerRouter.js";
 app.use("/onejob/api/job/task", taskRouter);
 app.use("/onejob/api/job/company", companyRouter);
 app.use("/onejob/api/employer/logo", logoRouter);
