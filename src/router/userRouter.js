@@ -46,6 +46,7 @@ router.get("/getWorkHistory/:id", async (req, res, next) => {
     const result = await findWorkHistory({
       userId: new mongoose.Types.ObjectId(id),
     });
+
     if (result?.length > 0) {
       return res.json({
         status: "success",

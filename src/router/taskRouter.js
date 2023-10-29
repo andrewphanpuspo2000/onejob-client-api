@@ -144,7 +144,7 @@ router.get("/getTasks", async (req, res, next) => {
     }
   } catch (error) {
     error.statusCode = 400;
-    next(err);
+    next(error);
   }
 });
 router.get("/getTaskById/:id", async (req, res, next) => {

@@ -38,6 +38,14 @@ const workHistorySchema = mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
+    city: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
