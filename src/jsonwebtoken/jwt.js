@@ -12,7 +12,7 @@ export const employerAccessJWT = async (email) => {
 };
 export const employerRefreshJWT = async (email) => {
   const token = jsonwebtoken.sign({ email }, process.env.REFRESH_JWT, {
-    expiresIn: "24h",
+    expiresIn: "1d",
   });
   const refreshJWT = await findCompanyAndUpdate(
     { email },

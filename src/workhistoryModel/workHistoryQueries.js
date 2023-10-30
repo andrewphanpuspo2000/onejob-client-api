@@ -6,3 +6,11 @@ export const addWorkHistory = (data) => {
 export const findWorkHistory = (userid) => {
   return workHistorySchema.find(userid);
 };
+
+export const deleteWorkHistory = (id) => {
+  return workHistorySchema.findByIdAndDelete(id);
+};
+
+export const updateWorkHistory = (filter, data) => {
+  return workHistorySchema.findOneAndUpdate(filter, data);
+};
