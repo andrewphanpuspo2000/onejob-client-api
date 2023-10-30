@@ -10,6 +10,10 @@ const educationSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    field: {
+      type: String,
+      required: true,
+    },
     startMonth: {
       type: String,
       required: true,

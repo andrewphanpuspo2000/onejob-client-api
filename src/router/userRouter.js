@@ -7,7 +7,10 @@ import {
 } from "../workhistoryModel/workHistoryQueries.js";
 import mongoose from "mongoose";
 import { authEmployer } from "../middleware/auth.js";
-import { addEducation } from "../educationModel/educationModal.js";
+import {
+  addEducation,
+  getEducationByFilter,
+} from "../educationModel/educationModal.js";
 
 const router = express.Router();
 
@@ -166,4 +169,20 @@ router.post("/addEducation", async (req, res, next) => {
     next(error);
   }
 });
+
+router.get("/getEducation/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await getEducationByFilter({
+      userId: new mongoose.Types.ObjectId(id),
+    });
+    return res.json({
+      status: "success",
+      result,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
