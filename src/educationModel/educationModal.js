@@ -7,3 +7,11 @@ export const addEducation = (data) => {
 export const getEducationByFilter = (data) => {
   return educationSchema.find(data);
 };
+
+export const updateEducation=(filter,data)=>{
+ return educationSchema.findOneAndUpdate(filter,data);
+}
+
+export const deleteEducation=(id)=>{
+   return educationSchema.findByIdAndDelete(id);
+}

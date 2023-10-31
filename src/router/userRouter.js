@@ -9,7 +9,9 @@ import mongoose from "mongoose";
 import { authEmployer } from "../middleware/auth.js";
 import {
   addEducation,
+  deleteEducation,
   getEducationByFilter,
+  updateEducation,
 } from "../educationModel/educationModal.js";
 
 const router = express.Router();
@@ -147,6 +149,9 @@ router.post("/addEducation", async (req, res, next) => {
     ) {
       req.body.achievements = req.body.achievements.split("\n");
       req.body.userId = new mongoose.Types.ObjectId(req.body.userId);
+      if(req.body.level==="High School"){
+         req.body.field="";
+      }
       const result = await addEducation(req.body);
       if (result?._id) {
         return res.json({
@@ -157,6 +162,9 @@ router.post("/addEducation", async (req, res, next) => {
     } else {
       const { achievements, ...rest } = req.body;
       rest.userId = new mongoose.Types.ObjectId(rest.userId);
+      if(req.body.level==="High School"){
+        rest.body.field="";
+      }
       const result = await addEducation(rest);
       if (result?._id) {
         return res.json({
@@ -183,6 +191,67 @@ router.get("/getEducation/:id", async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+router.put("/updateEducation", async (req, res, next) => {
+  try {
+    if (
+      req.body.achievements !== undefined &&
+      req?.body?.achievements?.length > 0
+    ) {
+      req.body.achievements = req.body.achievements.split("\n");
+      req.body.userId = new mongoose.Types.ObjectId(req.body.userId);
+      if(req.body.level==="High School"){
+         req.body.field="";
+      }
+      if(req?.body?.present==="present"){
+        req.body.endMonth="";
+        req.body.endYear=null;
+      }
+      const {_id,userId,...rest}=req.body;
+      const result = await updateEducation({_id:new mongoose.Types.ObjectId(req.body._id),userId:new mongoose.Types.ObjectId(req.body.userId)},rest);
+      if (result?._id) {
+        return res.json({
+          status: "success",
+          message: "education has been added",
+        });
+      }
+    } else {
+      
+      req.body.userId = new mongoose.Types.ObjectId(req.body.userId);
+      if(req.body.level==="High School"){
+        rest.body.field="";
+      }
+      if(req?.body?.present==="present"){
+        req.body.endMonth="";
+        req.body.endYear=null;
+      }
+      const { achievements,_id,userId, ...rest } = req.body;
+      const result = await updateEducation(rest);
+      if (result?._id) {
+        return res.json({
+          status: "success",
+          message: "education has been added",
+        });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+router.delete("/deleteEducation/:id",async(req,res,next)=>{
+ try{
+  const {id}= req.params;
+  const result= await deleteEducation(id);
+  if(result?._id){
+    return res.json({
+      status:"success",
+      message:"education has been deleted",
+    });
+  }
+ }catch(err){
+  next(err);
+ }
 });
 
 export default router;
