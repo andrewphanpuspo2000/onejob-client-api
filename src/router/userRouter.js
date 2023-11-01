@@ -35,7 +35,7 @@ router.post("/addWorkHistory", async (req, res, next) => {
     } else {
       const { description, ...rest } = req.body;
       rest.userId = new mongoose.Types.ObjectId(rest.userId);
-      const result = await addWorkHistory(rest);
+      const result = await addWorkHistory({...rest,description:[]});
       if (result?.id) {
         res.json({
           status: "success",
@@ -74,18 +74,20 @@ router.put("/updateWorkHistory", async (req, res, next) => {
         });
       }
     } else {
+
       const { description, _id, userId, ...rest } = req.body;
       if (rest?.present === "present") {
         rest.endMonth = "";
         rest.endYear = null;
       }
-      const result = await addWorkHistory(
+      const result = await updateWorkHistory(
         {
           _id: new mongoose.Types.ObjectId(_id),
           userId: new mongoose.Types.ObjectId(userId),
         },
-        rest
+        {description:[],...rest}
       );
+      console.log("this is result line 90",result);
       if (result?.id) {
         return res.json({
           status: "success",
@@ -195,6 +197,7 @@ router.get("/getEducation/:id", async (req, res, next) => {
 
 router.put("/updateEducation", async (req, res, next) => {
   try {
+    console.log(req.body);
     if (
       req.body.achievements !== undefined &&
       req?.body?.achievements?.length > 0
@@ -220,14 +223,14 @@ router.put("/updateEducation", async (req, res, next) => {
       
       req.body.userId = new mongoose.Types.ObjectId(req.body.userId);
       if(req.body.level==="High School"){
-        rest.body.field="";
+        req.body.field="";
       }
       if(req?.body?.present==="present"){
         req.body.endMonth="";
         req.body.endYear=null;
       }
-      const { achievements,_id,userId, ...rest } = req.body;
-      const result = await updateEducation(rest);
+      const {achievements,_id,userId, ...rest } = req.body;
+      const result = await updateEducation({_id:new mongoose.Types.ObjectId(_id),userId:new mongoose.Types.ObjectId(userId)},{...rest,achievements:[]});
       if (result?._id) {
         return res.json({
           status: "success",
