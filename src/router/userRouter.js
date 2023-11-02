@@ -13,9 +13,12 @@ import {
   getEducationByFilter,
   updateEducation,
 } from "../educationModel/educationModal.js";
-
+import multer from "multer";
+import { addPost } from "../postModel/postQueries.js";
+import { addPostFile } from "../aws-config/submitFIle.js";
 const router = express.Router();
 
+const upload = multer({ storage: multer.memoryStorage() });
 router.post("/addWorkHistory", async (req, res, next) => {
   try {
     if (
@@ -35,7 +38,7 @@ router.post("/addWorkHistory", async (req, res, next) => {
     } else {
       const { description, ...rest } = req.body;
       rest.userId = new mongoose.Types.ObjectId(rest.userId);
-      const result = await addWorkHistory({...rest,description:[]});
+      const result = await addWorkHistory({ ...rest, description: [] });
       if (result?.id) {
         res.json({
           status: "success",
@@ -74,7 +77,6 @@ router.put("/updateWorkHistory", async (req, res, next) => {
         });
       }
     } else {
-
       const { description, _id, userId, ...rest } = req.body;
       if (rest?.present === "present") {
         rest.endMonth = "";
@@ -85,9 +87,9 @@ router.put("/updateWorkHistory", async (req, res, next) => {
           _id: new mongoose.Types.ObjectId(_id),
           userId: new mongoose.Types.ObjectId(userId),
         },
-        {description:[],...rest}
+        { description: [], ...rest }
       );
-      console.log("this is result line 90",result);
+      console.log("this is result line 90", result);
       if (result?.id) {
         return res.json({
           status: "success",
@@ -151,8 +153,8 @@ router.post("/addEducation", async (req, res, next) => {
     ) {
       req.body.achievements = req.body.achievements.split("\n");
       req.body.userId = new mongoose.Types.ObjectId(req.body.userId);
-      if(req.body.level==="High School"){
-         req.body.field="";
+      if (req.body.level === "High School") {
+        req.body.field = "";
       }
       const result = await addEducation(req.body);
       if (result?._id) {
@@ -164,8 +166,8 @@ router.post("/addEducation", async (req, res, next) => {
     } else {
       const { achievements, ...rest } = req.body;
       rest.userId = new mongoose.Types.ObjectId(rest.userId);
-      if(req.body.level==="High School"){
-        rest.body.field="";
+      if (req.body.level === "High School") {
+        rest.body.field = "";
       }
       const result = await addEducation(rest);
       if (result?._id) {
@@ -204,15 +206,21 @@ router.put("/updateEducation", async (req, res, next) => {
     ) {
       req.body.achievements = req.body.achievements.split("\n");
       req.body.userId = new mongoose.Types.ObjectId(req.body.userId);
-      if(req.body.level==="High School"){
-         req.body.field="";
+      if (req.body.level === "High School") {
+        req.body.field = "";
       }
-      if(req?.body?.present==="present"){
-        req.body.endMonth="";
-        req.body.endYear=null;
+      if (req?.body?.present === "present") {
+        req.body.endMonth = "";
+        req.body.endYear = null;
       }
-      const {_id,userId,...rest}=req.body;
-      const result = await updateEducation({_id:new mongoose.Types.ObjectId(req.body._id),userId:new mongoose.Types.ObjectId(req.body.userId)},rest);
+      const { _id, userId, ...rest } = req.body;
+      const result = await updateEducation(
+        {
+          _id: new mongoose.Types.ObjectId(req.body._id),
+          userId: new mongoose.Types.ObjectId(req.body.userId),
+        },
+        rest
+      );
       if (result?._id) {
         return res.json({
           status: "success",
@@ -220,17 +228,22 @@ router.put("/updateEducation", async (req, res, next) => {
         });
       }
     } else {
-      
       req.body.userId = new mongoose.Types.ObjectId(req.body.userId);
-      if(req.body.level==="High School"){
-        req.body.field="";
+      if (req.body.level === "High School") {
+        req.body.field = "";
       }
-      if(req?.body?.present==="present"){
-        req.body.endMonth="";
-        req.body.endYear=null;
+      if (req?.body?.present === "present") {
+        req.body.endMonth = "";
+        req.body.endYear = null;
       }
-      const {achievements,_id,userId, ...rest } = req.body;
-      const result = await updateEducation({_id:new mongoose.Types.ObjectId(_id),userId:new mongoose.Types.ObjectId(userId)},{...rest,achievements:[]});
+      const { achievements, _id, userId, ...rest } = req.body;
+      const result = await updateEducation(
+        {
+          _id: new mongoose.Types.ObjectId(_id),
+          userId: new mongoose.Types.ObjectId(userId),
+        },
+        { ...rest, achievements: [] }
+      );
       if (result?._id) {
         return res.json({
           status: "success",
@@ -242,19 +255,61 @@ router.put("/updateEducation", async (req, res, next) => {
     next(error);
   }
 });
-router.delete("/deleteEducation/:id",async(req,res,next)=>{
- try{
-  const {id}= req.params;
-  const result= await deleteEducation(id);
-  if(result?._id){
-    return res.json({
-      status:"success",
-      message:"education has been deleted",
-    });
+router.delete("/deleteEducation/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteEducation(id);
+    if (result?._id) {
+      return res.json({
+        status: "success",
+        message: "education has been deleted",
+      });
+    }
+  } catch (err) {
+    next(err);
   }
- }catch(err){
-  next(err);
- }
 });
+
+router.post(
+  "/user/postProject",
+  upload.single("posting"),
+  async (req, res, next) => {
+    try {
+      console.log(req.file);
+      if (req?.file) {
+        const { Location } = await addPostFile(req.file);
+        console.log("this is location:", Location);
+        if (Location !== undefined) {
+          const result = await addPost({ ...req.body, file: Location });
+          if (result?._id) {
+            return res.json({
+              status: "success",
+              message: "project has been posted",
+            });
+          } else {
+            return res.json({
+              status: "error",
+              message: "project can not be posted",
+            });
+          }
+        }
+      }
+      const respond = await addPost(req.body);
+      if (respond?._id) {
+        return res.json({
+          status: "success",
+          message: "Project has been posted",
+        });
+      } else {
+        return res.json({
+          status: "error",
+          message: "Project can not be posted",
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 export default router;
